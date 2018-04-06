@@ -23,24 +23,31 @@ class Calculator extends React.Component {
     super(props);
     this.state = {
       x: '',
+      y: '',
       operator: '',
+      results:'',
       display: ''
     };
   }
 
   handleClickOperation(x) {
     if (x === '=') {
+      this.setState(function(previousState, currentProps) {
+        return {
+           y: previousState.display
+        };
+      });
       if (this.state.operator === '*') {
         this.setState({
-          display: this.state.x * parseInt(this.state.display)
+          results: this.state.x * parseInt(this.state.display)
         });
       } else if (this.state.operator === '-') {
         this.setState({
-          display: this.state.x - parseInt(this.state.display)
+          results: this.state.x - parseInt(this.state.display)
         });
       } else {
         this.setState({
-          display: this.state.x + parseInt(this.state.display)
+          results: this.state.x + parseInt(this.state.display)
         });
       }
 
@@ -54,7 +61,7 @@ class Calculator extends React.Component {
   }
 
   reset() {
-    this.setState({x: '', operator: '', display: ''});
+    this.setState({x: '', operator: '', display: '', y: '', results: ''});
   }
   handleClick(i) {
     this.setState({
@@ -68,7 +75,14 @@ class Calculator extends React.Component {
         <button onClick={() => {
           this.reset()
         }}>Reset</button>
+        <div>
         <CalculatorDisplay result={this.state.display}/>
+        </div>
+        <span>{this.state.x}</span>
+        <span>{this.state.operator}</span>
+        <span>{this.state.y}</span>
+        {this.state.results !== ''?(<span>=</span>):(<span></span>)}
+        <span>{this.state.results}</span>
         <div className="Calculator">
           <div className="CalcRow">
             {[0, 1, 2].map((x) => {
