@@ -1,136 +1,140 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
+import React, { useState } from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
 
 function CalculatorButton(props) {
   return (
     <span>
-      <button onClick={props.handleClick} className="ButtonClass" value={props.value}>{props.value}</button>
+      <button
+        onClick={props.handleClick}
+        className="ButtonClass"
+        value={props.value}
+      >
+        {props.value}
+      </button>
     </span>
   );
 }
 
-function CalculatorDisplay(prop) {
+function CalculatorDisplay(props) {
   return (
-    <span className="Display">
-      {prop.result}
-    </span>
+    <div className="Results">
+      <div className="Result">{props.display}</div>
+      <div className="Result">{props.x}</div>
+      <div className="Result">{props.operator}</div>
+      <div className="Result">{props.y}</div>
+      <div className="Result">{props.results}</div>
+    </div>
   );
 }
 
-class Calculator extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      x: '',
-      y: '',
-      operator: '',
-      results:'',
-      display: ''
-    };
-  }
+const Calculator = () => {
+  const [x, setX] = useState("");
+  const [y, setY] = useState("");
+  const [operator, setOperator] = useState("");
+  const [results, setResults] = useState("");
+  const [display, setDisplay] = useState("");
 
-  handleClickOperation(x) {
-    if (x === '=') {
-      this.setState(function(previousState, currentProps) {
-        return {
-           y: previousState.display
-        };
-      });
-      if (this.state.operator === '*') {
-        this.setState({
-          results: this.state.x * parseInt(this.state.display)
-        });
-      } else if (this.state.operator === '-') {
-        this.setState({
-          results: this.state.x - parseInt(this.state.display)
-        });
+  const handleClickOperation = o => {
+    if (o === "=") {
+      const yInt= parseInt(display);
+      if (operator === "*") {
+        setResults(x * yInt);
+      } else if (operator === "-") {
+        setResults(x - yInt);
       } else {
-        this.setState({
-          results: this.state.x + parseInt(this.state.display)
-        });
+        setResults(x + yInt);
       }
-
+      setDisplay("");
+      setY(yInt);
     } else {
-      this.setState({
-        x: parseInt(this.state.display),
-        display: '',
-        operator: x
-      });
+      setX(parseInt(display));
+      setDisplay("");
+      setOperator(o);
     }
-  }
+  };
 
-  reset() {
-    this.setState({x: '', operator: '', display: '', y: '', results: ''});
-  }
-  handleClick(i) {
-    this.setState({
-      display: this.state.display + i
-    });
-  }
+  const reset = () => {
+    setDisplay("");
+    setOperator("");
+    setX("");
+    setY("");
+    setResults("");
+  };
+  const handleClick = i => {
+    setDisplay(display + i);
+  };
 
-  render() {
-    return (
+  return (
+    <div>
+      <button
+        onClick={() => {
+          reset();
+        }}
+      >
+        Reset
+      </button>
       <div>
-        <button onClick={() => {
-          this.reset()
-        }}>Reset</button>
-        <div>
-        <CalculatorDisplay result={this.state.display}/>
+        <CalculatorDisplay display={display} x={x} y={y} operator={operator} results={results}/>
+      </div>
+      <div className="Calculator">
+        <div className="CalcRow">
+          {[0, 1, 2].map(x => {
+            return (
+              <CalculatorButton
+                key={x}
+                handleClick={() => {
+                  handleClick(x);
+                }}
+                value={x}
+              />
+            );
+          })}
         </div>
-        <span>{this.state.x}</span>
-        <span>{this.state.operator}</span>
-        <span>{this.state.y}</span>
-        {this.state.results !== ''?(<span>=</span>):(<span></span>)}
-        <span>{this.state.results}</span>
-        <div className="Calculator">
-          <div className="CalcRow">
-            {[0, 1, 2].map((x) => {
-              return (<CalculatorButton
+        <div className="CalcRow">
+          {[3, 4, 5].map(x => {
+            return (
+              <CalculatorButton
                 key={x}
                 handleClick={() => {
-                this.handleClick(x)
-              }}
-                value={x}/>)
-            })}
-          </div>
-          <div className="CalcRow">
-            {[3, 4, 5].map((x) => {
-              return (<CalculatorButton
+                  handleClick(x);
+                }}
+                value={x}
+              />
+            );
+          })}
+        </div>
+        <div className="CalcRow">
+          {[6, 7, 8].map(x => {
+            return (
+              <CalculatorButton
                 key={x}
                 handleClick={() => {
-                this.handleClick(x)
-              }}
-                value={x}/>)
-            })}
-          </div>
-          <div className="CalcRow">
-            {[6, 7, 8].map((x) => {
-              return (<CalculatorButton
+                  handleClick(x);
+                }}
+                value={x}
+              />
+            );
+          })}
+        </div>
+        <div className="CalcRow">
+          {["+", "*", "="].map(x => {
+            return (
+              <CalculatorButton
                 key={x}
                 handleClick={() => {
-                this.handleClick(x)
-              }}
-                value={x}/>)
-            })}
-          </div>
-          <div className="CalcRow">
-            {['+', '*', '='].map((x) => {
-              return (<CalculatorButton
-                key={x}
-                handleClick={() => {
-                this.handleClickOperation(x)
-              }}
-                value={x}/>)
-            })}
-          </div>
+                  handleClickOperation(x);
+                }}
+                value={x}
+              />
+            );
+          })}
         </div>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 // ========================================
 
-ReactDOM.render(
-  <Calculator/>, document.getElementById('root'));
+ReactDOM.render(<Calculator />, document.getElementById("root"));

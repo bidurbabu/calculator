@@ -21,3 +21,9 @@ width: auto;
   margin-left: 10px;
   font-size: 16px;
 }
+.Results {
+  display: flex;
+}
+.Result {
+  width: 50px;
+}
