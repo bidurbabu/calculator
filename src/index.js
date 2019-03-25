@@ -16,14 +16,32 @@ function CalculatorButton(props) {
   );
 }
 
+const ButtonRow = (rowArray, handleClick) => {
+  return (
+    <div className="CalcRow">
+      {rowArray.map(x => {
+        return (
+          <CalculatorButton
+            key={x}
+            handleClick={() => {
+              handleClick(x);
+            }}
+            value={x}
+          />
+        );
+      })}
+    </div>
+  );
+};
+
 function CalculatorDisplay(props) {
+  const { display, x, operator, y, results } = props;
+
   return (
     <div className="Results">
-      <div className="Result">{props.display}</div>
-      <div className="Result">{props.x}</div>
-      <div className="Result">{props.operator}</div>
-      <div className="Result">{props.y}</div>
-      <div className="Result">{props.results}</div>
+      {[display, x, operator, y, results].map(v => (
+        <div className="Result">{v}</div>
+      ))}
     </div>
   );
 }
@@ -35,9 +53,9 @@ const Calculator = () => {
   const [results, setResults] = useState("");
   const [display, setDisplay] = useState("");
 
-  const handleClickOperation = o => {
+  const handleOperationClick = o => {
     if (o === "=") {
-      const yInt= parseInt(display);
+      const yInt = parseInt(display);
       if (operator === "*") {
         setResults(x * yInt);
       } else if (operator === "-") {
@@ -61,9 +79,11 @@ const Calculator = () => {
     setY("");
     setResults("");
   };
-  const handleClick = i => {
+  const handleNumberClick = i => {
     setDisplay(display + i);
   };
+
+
 
   return (
     <div>
@@ -75,61 +95,19 @@ const Calculator = () => {
         Reset
       </button>
       <div>
-        <CalculatorDisplay display={display} x={x} y={y} operator={operator} results={results}/>
+        <CalculatorDisplay
+          display={display}
+          x={x}
+          y={y}
+          operator={operator}
+          results={results}
+        />
       </div>
       <div className="Calculator">
-        <div className="CalcRow">
-          {[0, 1, 2].map(x => {
-            return (
-              <CalculatorButton
-                key={x}
-                handleClick={() => {
-                  handleClick(x);
-                }}
-                value={x}
-              />
-            );
-          })}
-        </div>
-        <div className="CalcRow">
-          {[3, 4, 5].map(x => {
-            return (
-              <CalculatorButton
-                key={x}
-                handleClick={() => {
-                  handleClick(x);
-                }}
-                value={x}
-              />
-            );
-          })}
-        </div>
-        <div className="CalcRow">
-          {[6, 7, 8].map(x => {
-            return (
-              <CalculatorButton
-                key={x}
-                handleClick={() => {
-                  handleClick(x);
-                }}
-                value={x}
-              />
-            );
-          })}
-        </div>
-        <div className="CalcRow">
-          {["+", "*", "="].map(x => {
-            return (
-              <CalculatorButton
-                key={x}
-                handleClick={() => {
-                  handleClickOperation(x);
-                }}
-                value={x}
-              />
-            );
-          })}
-        </div>
+        {[[0, 1, 2], [3, 4, 5], [6, 7, 8]].map(arr => {
+          return ButtonRow(arr, handleNumberClick);
+        })}
+        {ButtonRow(["+", "*", "="], handleOperationClick)}
       </div>
     </div>
   );
