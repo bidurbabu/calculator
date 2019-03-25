@@ -38,10 +38,9 @@ function CalculatorDisplay(props) {
   const { display, x, operator, y, results } = props;
 
   return (
-    <div className="Results">
-      {[display, x, operator, y, results].map(v => (
-        <div className="Result">{v}</div>
-      ))}
+    <div>
+     
+      <h4>{ `${x?x:display} ${operator?operator:''} ${y?y:x?display:''}  ${results?'='+results:''}`}</h4>
     </div>
   );
 }
@@ -79,11 +78,10 @@ const Calculator = () => {
     setY("");
     setResults("");
   };
+  
   const handleNumberClick = i => {
     setDisplay(display + i);
   };
-
-
 
   return (
     <div>
@@ -94,6 +92,12 @@ const Calculator = () => {
       >
         Reset
       </button>
+      <div className="Calculator">
+        {[[0, 1, 2], [3, 4, 5], [6, 7, 8]].map(arr => {
+          return ButtonRow(arr, handleNumberClick);
+        })}
+        {ButtonRow(["+", "*", "="], handleOperationClick)}
+      </div>
       <div>
         <CalculatorDisplay
           display={display}
@@ -102,12 +106,6 @@ const Calculator = () => {
           operator={operator}
           results={results}
         />
-      </div>
-      <div className="Calculator">
-        {[[0, 1, 2], [3, 4, 5], [6, 7, 8]].map(arr => {
-          return ButtonRow(arr, handleNumberClick);
-        })}
-        {ButtonRow(["+", "*", "="], handleOperationClick)}
       </div>
     </div>
   );
