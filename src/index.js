@@ -1,6 +1,54 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
+import { createStore } from "redux";
 import "./index.css";
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "updateX":
+      return { ...state, x: action.value };
+    case "updateY":
+      return { ...state, y: action.value };
+    case "updateO":
+      return { ...state, operator: action.value };
+    case "updateD":
+      return { ...state, display: action.value };
+    case "updateR":
+      return { ...state, results: action.value };
+    default:
+      return state;
+  }
+};
+
+const initialState = {
+  x: "",
+  y: "",
+  operator: "",
+  results: "",
+  display: ""
+};
+const store = createStore(reducer, initialState);
+
+const updateX = value => {
+  return { type: "updateX", value };
+};
+
+const updateY = value => {
+  return { type: "updateY", value };
+};
+
+const updateO = value => {
+  return { type: "updateO", value };
+};
+
+const updateR = value => {
+  return { type: "updateR", value };
+};
+
+const updateD = value => {
+  return { type: "updateD", value };
+};
+
 
 function CalculatorButton(props) {
   return (
@@ -39,48 +87,44 @@ function CalculatorDisplay(props) {
 
   return (
     <div>
-     
-      <h4>{ `${x?x:display} ${operator?operator:''} ${y?y:x?display:''}  ${results?'='+results:''}`}</h4>
+      <h4>{`${x ? x : display} ${operator ? operator : ""} ${
+        y ? y : x ? display : ""
+      }  ${results ? "=" + results : ""}`}</h4>
     </div>
   );
 }
 
 const Calculator = () => {
-  const [x, setX] = useState("");
-  const [y, setY] = useState("");
-  const [operator, setOperator] = useState("");
-  const [results, setResults] = useState("");
-  const [display, setDisplay] = useState("");
-
+  const { x, y, operator, results, display } = store.getState();
   const handleOperationClick = o => {
     if (o === "=") {
       const yInt = parseInt(display);
       if (operator === "*") {
-        setResults(x * yInt);
+        store.dispatch(updateR(x * yInt));
       } else if (operator === "-") {
-        setResults(x - yInt);
+        store.dispatch(updateR(x - yInt));
       } else {
-        setResults(x + yInt);
+        store.dispatch(updateR(x + yInt));
       }
-      setDisplay("");
-      setY(yInt);
+      store.dispatch(updateD(""));
+      store.dispatch(updateY(yInt));
     } else {
-      setX(parseInt(display));
-      setDisplay("");
-      setOperator(o);
+      store.dispatch(updateX(parseInt(display)));
+      store.dispatch(updateD(""));
+      store.dispatch(updateO(o));
     }
   };
 
   const reset = () => {
-    setDisplay("");
-    setOperator("");
-    setX("");
-    setY("");
-    setResults("");
+    // setDisplay("");
+    // setOperator("");
+    // setX("");
+    // setY("");
+    // setResults("");
   };
-  
+
   const handleNumberClick = i => {
-    setDisplay(display + i);
+    store.dispatch(updateD(display + i));
   };
 
   return (
@@ -100,11 +144,11 @@ const Calculator = () => {
       </div>
       <div>
         <CalculatorDisplay
-          display={display}
-          x={x}
-          y={y}
-          operator={operator}
-          results={results}
+          display={store.getState().display}
+          x={store.getState().x}
+          y={store.getState().y}
+          operator={store.getState().operator}
+          results={store.getState().results}
         />
       </div>
     </div>
@@ -113,4 +157,8 @@ const Calculator = () => {
 
 // ========================================
 
-ReactDOM.render(<Calculator />, document.getElementById("root"));
+const render = () => {
+  return ReactDOM.render(<Calculator />, document.getElementById("root"));
+}
+render();
+store.subscribe(render);
